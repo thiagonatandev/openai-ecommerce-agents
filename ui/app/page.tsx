@@ -88,7 +88,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex h-screen gap-2 bg-gray-100 p-2">
+    <main className="flex h-screen gap-2 bg-zinc-800 p-2">
       <AgentPanel
         agents={agents}
         currentAgent={currentAgent}

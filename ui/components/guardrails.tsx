@@ -18,7 +18,7 @@ export function Guardrails({ guardrails, inputGuardrails }: GuardrailsProps) {
   };
 
   const guardrailDescriptionMap: Record<string, string> = {
-    "Relevance Guardrail": "Ensure messages are relevant to airline support",
+    "Relevance Guardrail": "Ensure messages are relevant to orders support",
     "Jailbreak Guardrail":
       "Detect and block attempts to bypass or override system instructions",
   };
@@ -44,23 +44,22 @@ export function Guardrails({ guardrails, inputGuardrails }: GuardrailsProps) {
   return (
     <PanelSection
       title="Guardrails"
-      icon={<Shield className="h-4 w-4 text-blue-600" />}
+      icon={<Shield className="h-4 w-4 text-teal-200" />}
+      titleStyle="text-slate-100"
     >
       <div className="grid grid-cols-3 gap-3">
         {guardrailsToShow.map((gr) => (
           <Card
             key={gr.id}
-            className={`bg-white border-gray-200 transition-all ${
-              !gr.input ? "opacity-60" : ""
-            }`}
+            className={`bg-[#2a2a2a] border transition-all ${!gr.input || gr.passed? 'border-emerald-700' : 'border-amber-700'}`}
           >
             <CardHeader className="p-3 pb-1">
-              <CardTitle className="text-sm flex items-center text-zinc-900">
+              <CardTitle className="text-sm flex items-center text-gray-200">
                 {extractGuardrailName(gr.name)}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-1">
-              <p className="text-xs font-light text-zinc-500 mb-1">
+              <p className="text-xs font-light text-gray-400 mb-1">
                 {(() => {
                   const title = extractGuardrailName(gr.name);
                   return guardrailDescriptionMap[title] ?? gr.input;
@@ -68,12 +67,12 @@ export function Guardrails({ guardrails, inputGuardrails }: GuardrailsProps) {
               </p>
               <div className="flex text-xs">
                 {!gr.input || gr.passed ? (
-                  <Badge className="mt-2 px-2 py-1 bg-emerald-500 hover:bg-emerald-600 flex items-center text-white">
+                  <Badge className="mt-2 px-2 py-1 bg-emerald-600 hover:bg-emerald-700 flex items-center text-white">
                     <CheckCircle className="h-4 w-4 mr-1 text-white" />
                     Passed
                   </Badge>
                 ) : (
-                  <Badge className="mt-2 px-2 py-1 bg-red-500 hover:bg-red-600 flex items-center text-white">
+                  <Badge className="mt-2 px-2 py-1 bg-red-600 hover:bg-red-700 flex items-center text-white">
                     <XCircle className="h-4 w-4 mr-1 text-white" />
                     Failed
                   </Badge>

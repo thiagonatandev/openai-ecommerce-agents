@@ -21,7 +21,7 @@ function formatEventName(type: string) {
 }
 
 function EventIcon({ type }: { type: string }) {
-  const className = "h-4 w-4 text-zinc-600";
+  const className = "h-4 w-4 text-gray-50";
   switch (type) {
     case "handoff":
       return <ArrowRightLeft className={className} />;
@@ -36,6 +36,21 @@ function EventIcon({ type }: { type: string }) {
   }
 }
 
+function getEventBorderColor(type: string) {
+  switch (type) {
+    case "handoff":
+      return "border-red-950";
+    case "tool_call":
+      return "border-amber-950";
+    case "tool_output":
+      return "border-orange-950";
+    case "context_update":
+      return "border-yellow-950";
+    default:
+      return null;
+  }
+}
+
 function EventDetails({ event }: { event: AgentEvent }) {
   let details = null;
   const className =
@@ -44,11 +59,11 @@ function EventDetails({ event }: { event: AgentEvent }) {
     case "handoff":
       details = event.metadata && (
         <div className={className}>
-          <div className="text-gray-600">
+          <div className="text-gray-50">
             <span className="text-zinc-600 font-medium">From:</span>{" "}
             {event.metadata.source_agent}
           </div>
-          <div className="text-gray-600">
+          <div className="text-gray-50">
             <span className="text-zinc-600 font-medium">To:</span>{" "}
             {event.metadata.target_agent}
           </div>
@@ -61,7 +76,7 @@ function EventDetails({ event }: { event: AgentEvent }) {
           <div className="text-xs text-zinc-600 mb-1 font-medium">
             Arguments
           </div>
-          <pre className="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">
+          <pre className="text-xs text-gray-50 bg-[#1e1e1e] p-2 rounded overflow-x-auto">
             {JSON.stringify(event.metadata.tool_args, null, 2)}
           </pre>
         </div>
@@ -71,7 +86,7 @@ function EventDetails({ event }: { event: AgentEvent }) {
       details = event.metadata && event.metadata.tool_result && (
         <div className={className}>
           <div className="text-xs text-zinc-600 mb-1 font-medium">Result</div>
-          <pre className="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">
+          <pre className="text-xs text-gray-50 bg-[#1e1e1e] p-2 rounded overflow-x-auto">
             {JSON.stringify(event.metadata.tool_result, null, 2)}
           </pre>
         </div>
@@ -82,8 +97,8 @@ function EventDetails({ event }: { event: AgentEvent }) {
         <div className={className}>
           {Object.entries(event.metadata.changes).map(([key, value]) => (
             <div key={key} className="text-xs">
-              <div className="text-gray-600">
-                <span className="text-zinc-600 font-medium">{key}:</span>{" "}
+              <div className="text-gray-50">
+                <span className="text-gray-50 font-medium">{key}:</span>{" "}
                 {value ?? "null"}
               </div>
             </div>
@@ -98,7 +113,7 @@ function EventDetails({ event }: { event: AgentEvent }) {
   return (
     <div className="mt-1 text-sm">
       {event.content && (
-        <div className="text-gray-700 font-mono mb-2">{event.content}</div>
+        <div className="text-gray-50 font-mono mb-2">{event.content}</div>
       )}
       {details}
     </div>
@@ -118,7 +133,7 @@ function TimeBadge({ timestamp }: { timestamp: Date }) {
   return (
     <Badge
       variant="outline"
-      className="text-[10px] h-5 bg-white text-zinc-500 border-gray-200"
+      className="text-[10px] text-gray-50 h-5 bg-gray-700 border-gray-700"
     >
       {formattedDate}
     </Badge>
@@ -128,30 +143,30 @@ function TimeBadge({ timestamp }: { timestamp: Date }) {
 export function RunnerOutput({ runnerEvents }: RunnerOutputProps) {
   return (
     <div className="flex-1 overflow-hidden">
-      <PanelSection title="Runner Output" icon={<MessageSquareMore className="h-4 w-4 text-blue-600" />}>
-        <ScrollArea className="h-[calc(100%-2rem)] rounded-md border border-gray-200 bg-gray-100 shadow-sm">
+      <PanelSection title="Runner Output" icon={<MessageSquareMore className="h-4 w-4 text-teal-200" />} titleStyle="text-slate-100"> 
+        <ScrollArea className="h-[calc(100%-2rem)] rounded-md border border-[#3a3a3a] [#2a2a2a] shadow-sm">
         <div className="p-4 space-y-3">
           {runnerEvents.length === 0 ? (
-            <p className="text-center text-zinc-500 p-4">
+            <p className="text-center text-gray-50 p-4">
               No runner events yet
             </p>
           ) : (
             runnerEvents.map((event) => (
               <Card
                 key={event.id}
-                className="border border-gray-200 bg-white shadow-sm rounded-lg"
+                className={`border ${getEventBorderColor(event.type)} bg-[#2a2a2a] shadow-sm rounded-lg`}
               >
                 <CardHeader className="flex flex-row justify-between items-center p-4">
-                  <span className="font-medium text-gray-800 text-sm">
+                  <span className="font-medium text-gray-50 text-sm">
                     {event.agent}
                   </span>
                   <TimeBadge timestamp={event.timestamp} />
                 </CardHeader>
 
                 <CardContent className="flex items-start gap-3 p-4">
-                  <div className="rounded-full p-2 bg-gray-100 flex items-center gap-2">
+                  <div className="rounded-full p-2 bg-[#3a3a3a] flex items-center gap-2">
                     <EventIcon type={event.type} />
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-gray-50">
                       {formatEventName(event.type)}
                     </div>
                   </div>

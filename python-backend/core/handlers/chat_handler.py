@@ -138,8 +138,6 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
                 content=tool_name or "",
                 metadata={"tool_args": tool_args},
             ))
-            if tool_name == "display_seat_map":
-                messages.append(MessageResponse(content="DISPLAY_SEAT_MAP", agent=item.agent.name))
         elif isinstance(item, ToolCallOutputItem):
             events.append(AgentEvent(
                 id=uuid4().hex,

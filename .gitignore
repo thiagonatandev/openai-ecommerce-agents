@@ -133,3 +133,7 @@ node_modules/
 # ui stuff
 
 ui/.next/
+
+
+#package-lock
+ui/package-lock.json

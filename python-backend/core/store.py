@@ -1,0 +1,3 @@
+from db.in_memory_conversation_store import InMemoryConversationStore
+
+conversation_store = InMemoryConversationStore()

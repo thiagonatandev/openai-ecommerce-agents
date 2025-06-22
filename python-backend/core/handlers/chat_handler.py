@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from uuid import uuid4
 import time
 import json
+import uuid
 
 from agents import (
     Runner,
@@ -19,7 +20,7 @@ from models.chat_request import ChatRequest
 from models.chat_response import ChatResponse
 from models.guardrail_check import GuardrailCheck
 from models.message_response import MessageResponse
-from context.ecommerce_context import create_initial_context
+from context.ecommerce_context import ECommerceAgentContext, create_initial_context
 from core.registry.agent_registry import AGENTS, DEFAULT_AGENT
 from core.helpers.build_agents_list import build_agents_list
 from core.helpers.get_guardrail_name import get_guardrail_name
@@ -28,35 +29,54 @@ from core.store import conversation_store
 def get_agent(name: str):
     return AGENTS.get(name, DEFAULT_AGENT)
 
-async def handle_chat_request(req: ChatRequest) -> ChatResponse:
-    is_new = not req.conversation_id or conversation_store.get(req.conversation_id) is None
+def generate_conversation_id():
+    return str(uuid.uuid4())
 
-    if is_new:
-        conversation_id = uuid4().hex
+async def handle_chat_request(req: ChatRequest) -> ChatResponse:
+    if not req.conversation_id:
+        req.conversation_id = generate_conversation_id()
+
+    conversation = conversation_store.get(req.conversation_id)
+
+    if conversation is None:
         ctx = create_initial_context()
-        current_agent_name = DEFAULT_AGENT.name
         state = {
             "input_items": [],
             "context": ctx,
-            "current_agent": current_agent_name,
+            "current_agent": DEFAULT_AGENT.name,
+            "messages": [],
+            "events": [],
+            "agents": build_agents_list(),
+            "guardrails": [],
         }
-        if req.message.strip() == "":
-            conversation_store.save(conversation_id, state)
-            return ChatResponse(
-                conversation_id=conversation_id,
-                current_agent=current_agent_name,
-                messages=[],
-                events=[],
-                context=ctx.model_dump(),
-                agents=build_agents_list(),
-                guardrails=[],
-            )
+        conversation_store.save(req.conversation_id, state)
+        conversation = state
     else:
-        conversation_id = req.conversation_id
-        state = conversation_store.get(conversation_id)
+        if isinstance(conversation.get("context"), dict):
+            conversation["context"] = ECommerceAgentContext.model_validate(conversation["context"])
+
+    state = conversation
+
+    if not req.message.strip():
+        return ChatResponse(
+            conversation_id=req.conversation_id,
+            current_agent=state["current_agent"],
+            context=state.get("context", {}).model_dump() if hasattr(state["context"], "model_dump") else state["context"],
+            messages=state.get("messages", []),
+            agents=state.get("agents", []),
+            events=state.get("events", []),
+            guardrails=state.get("guardrails", []),
+        )
 
     current_agent = get_agent(state["current_agent"])
     state["input_items"].append({"content": req.message, "role": "user"})
+
+    state.setdefault("messages", []).append({
+        "content": req.message,
+        "role": "user",
+        "agent": "user"
+    })
+
     old_context = state["context"].model_dump().copy()
     guardrail_checks = []
 
@@ -67,6 +87,7 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
         gr_output = e.guardrail_result.output.output_info
         gr_reasoning = getattr(gr_output, "reasoning", "")
         gr_timestamp = time.time() * 1000
+
         for g in current_agent.input_guardrails:
             guardrail_checks.append(GuardrailCheck(
                 id=uuid4().hex,
@@ -76,10 +97,18 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
                 passed=(g != failed),
                 timestamp=gr_timestamp,
             ))
-        refusal = "Sorry, I can only answer questions related to airline travel."
+
+        refusal = "Sorry, I can only answer questions related to orders assistance."
         state["input_items"].append({"role": "assistant", "content": refusal})
+        state["messages"].append({
+            "content": refusal,
+            "role": "assistant",
+            "agent": current_agent.name ,
+        })
+
+        conversation_store.save(req.conversation_id, state)
         return ChatResponse(
-            conversation_id=conversation_id,
+            conversation_id=req.conversation_id,
             current_agent=current_agent.name,
             messages=[MessageResponse(content=refusal, agent=current_agent.name)],
             events=[],
@@ -94,7 +123,7 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
     for item in result.new_items:
         if isinstance(item, MessageOutputItem):
             text = ItemHelpers.text_message_output(item)
-            messages.append(MessageResponse(content=text, agent=item.agent.name))
+            messages.append(MessageResponse(content=text, agent=item.agent.name, role="assistant"))
             events.append(AgentEvent(id=uuid4().hex, type="message", agent=item.agent.name, content=text))
         elif isinstance(item, HandoffOutputItem):
             events.append(AgentEvent(
@@ -104,11 +133,8 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
                 content=f"{item.source_agent.name} -> {item.target_agent.name}",
                 metadata={"source_agent": item.source_agent.name, "target_agent": item.target_agent.name},
             ))
-            ho = next(
-                (h for h in getattr(item.source_agent, "handoffs", [])
-                 if isinstance(h, Handoff) and getattr(h, "agent_name", None) == item.target_agent.name),
-                None,
-            )
+            ho = next((h for h in getattr(item.source_agent, "handoffs", [])
+                       if isinstance(h, Handoff) and getattr(h, "agent_name", None) == item.target_agent.name), None)
             if ho:
                 fn = ho.on_invoke_handoff
                 if "on_handoff" in fn.__code__.co_freevars:
@@ -160,8 +186,14 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
 
     state["input_items"] = result.to_input_list()
     state["current_agent"] = current_agent.name
-    conversation_store.save(conversation_id, state)
-
+    state["messages"].extend([{
+        "content": m.content,
+        "role": "user" if m.agent is None or m.agent == "user" else "assistant",
+        "agent": m.agent,
+    } for m in messages])
+    
+    state["events"].extend([e.model_dump() for e in events])
+    state["agents"] = build_agents_list()
     final_guardrails = []
     for g in getattr(current_agent, "input_guardrails", []):
         name = get_guardrail_name(g)
@@ -178,12 +210,15 @@ async def handle_chat_request(req: ChatRequest) -> ChatResponse:
                 timestamp=time.time() * 1000,
             ))
 
+    state["guardrails"] = [g.model_dump() for g in final_guardrails]
+    conversation_store.save(req.conversation_id, state)
+
     return ChatResponse(
-        conversation_id=conversation_id,
+        conversation_id=req.conversation_id,
         current_agent=current_agent.name,
         messages=messages,
         events=events,
         context=state["context"].dict(),
-        agents=build_agents_list(),
+        agents=state["agents"],
         guardrails=final_guardrails,
     )

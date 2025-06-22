@@ -1,3 +1,3 @@
-from db.in_memory_conversation_store import InMemoryConversationStore
+from db.redis_conversation_store import RedisConversationStore
 
-conversation_store = InMemoryConversationStore()
+conversation_store = RedisConversationStore()

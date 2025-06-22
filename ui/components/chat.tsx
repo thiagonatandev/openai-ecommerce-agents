@@ -84,24 +84,28 @@ export function Chat({ messages, onSendMessage, isLoading }: ChatProps) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto min-h-0 md:px-4 pt-4 pb-20">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex mb-5 text-sm ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+        {messages.map((msg, idx) => {
+          const isUser = msg.role === 'user' || msg.agent == null;
+          console.log(msg.role)
+          return (
             <div
-              className={`rounded-[16px] px-4 py-2 font-light max-w-[80%] ${
-                msg.role === "user"
-                  ? "bg-[#2e2e2e] text-white ml-4 md:ml-24 rounded-br-[4px]"
-                  : "bg-[#3a3a3a] text-gray-100 mr-4 md:mr-24 rounded-bl-[4px]"
+              key={idx}
+              className={`flex mb-5 text-sm ${
+                isUser ? "justify-end" : "justify-start"
               }`}
             >
-              <ReactMarkdown>{msg.content}</ReactMarkdown>
+              <div
+                className={`rounded-[16px] px-4 py-2 font-light max-w-[80%] ${
+                  isUser
+                    ? "bg-[#2e2e2e] text-white ml-4 md:ml-24 rounded-br-[4px]"
+                    : "bg-[#3a3a3a] text-gray-100 mr-4 md:mr-24 rounded-bl-[4px]"
+                }`}
+              >
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {isLoading && (
           <div className="flex mb-5 text-sm justify-start pl-4">

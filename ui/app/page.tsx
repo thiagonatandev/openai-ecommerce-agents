@@ -14,16 +14,20 @@ export default function Home() {
   const [guardrails, setGuardrails] = useState<GuardrailCheck[]>([]);
   const [context, setContext] = useState<Record<string, any>>({});
   const [conversationId, setConversationId] = useState<string | null>(null);
-  // Loading state while awaiting assistant response
   const [isLoading, setIsLoading] = useState(false);
 
-  // Boot the conversation
   useEffect(() => {
-    (async () => {
-      const data = await callChatAPI("", conversationId ?? "");
+    const storedId = localStorage.getItem("conversation_id");
+
+    const bootConversation = async () => {
+      const data = await callChatAPI("", storedId ?? "");
+      console.log("Received conversation_id from backend:", data.conversation_id);
       setConversationId(data.conversation_id);
+      console.log(data.conversation_id)
+      localStorage.setItem("conversation_id", data.conversation_id);
       setCurrentAgent(data.current_agent);
       setContext(data.context);
+
       const initialEvents = (data.events || []).map((e: any) => ({
         ...e,
         timestamp: e.timestamp ?? Date.now(),
@@ -31,21 +35,23 @@ export default function Home() {
       setEvents(initialEvents);
       setAgents(data.agents || []);
       setGuardrails(data.guardrails || []);
+
       if (Array.isArray(data.messages)) {
         setMessages(
           data.messages.map((m: any) => ({
             id: Date.now().toString() + Math.random().toString(),
             content: m.content,
-            role: "assistant",
+            role: m.role,
             agent: m.agent,
             timestamp: new Date(),
           }))
         );
       }
-    })();
+    };
+
+    bootConversation();
   }, []);
 
-  // Send a user message
   const handleSendMessage = async (content: string) => {
     const userMsg: Message = {
       id: Date.now().toString(),
@@ -59,7 +65,11 @@ export default function Home() {
 
     const data = await callChatAPI(content, conversationId ?? "");
 
-    if (!conversationId) setConversationId(data.conversation_id);
+    if (!conversationId) {
+      setConversationId(data.conversation_id);
+      localStorage.setItem("conversation_id", data.conversation_id);
+    }
+
     setCurrentAgent(data.current_agent);
     setContext(data.context);
     if (data.events) {
@@ -70,7 +80,6 @@ export default function Home() {
       setEvents((prev) => [...prev, ...stamped]);
     }
     if (data.agents) setAgents(data.agents);
-    // Update guardrails state
     if (data.guardrails) setGuardrails(data.guardrails);
 
     if (data.messages) {

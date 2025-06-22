@@ -1,0 +1,4 @@
+discount_code,description,type,value,is_active,expiration_date,min_purchase_value,applicable_category
+DISC10,10% off entire order,Percentage,10.0,TRUE,2023-12-31,100.00,
+SUMMER20,$20 off summer collection,Fixed,20.0,TRUE,2023-08-31,150.00,Fitness
+WELCOME5,$5 off first order,Fixed,5.0,TRUE,2023-12-31,25.00,

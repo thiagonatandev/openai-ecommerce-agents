@@ -1,0 +1,6 @@
+payment_id,order_number,amount,method,status,transaction_date
+PA482XC,OR928XC,259.98,Credit Card,Completed,2023-05-15 09:32:00
+PA739JK,OR739JK,89.99,PayPal,Completed,2023-05-16 14:17:00
+PA526LM,OR526LM,139.98,Credit Card,Pending,2023-05-17 11:22:00
+PA314NP,OR314NP,209.97,Apple Pay,Completed,2023-05-18 16:47:00
+PA902QR,OR902QR,49.99,Google Pay,Refunded,2023-05-19 10:12:00

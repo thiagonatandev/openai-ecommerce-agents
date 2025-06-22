@@ -1,0 +1,6 @@
+order_number,customer_email,user_id,total_amount,status,tracking_code,payment_id,discount_code,created_at
+OR928XC,john.doe@email.com,a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,259.98,Shipped,TRK123456,PA482XC,DISC10,2023-05-15 09:30:00
+OR739JK,jane.smith@email.com,b1ffac1d-8e5d-4a7c-9f2e-6c3d9b0e380b,89.99,Delivered,TRK789012,PA739JK,,2023-05-16 14:15:00
+OR526LM,robert.j@email.com,c2ddbc22-7f4c-4e8d-9e3f-5d2a8c1f470c,139.98,Processing,,PA526LM,,2023-05-17 11:20:00
+OR314NP,emily.d@email.com,d3eecd33-6e3b-4d9c-8f2d-4c1b7a0e360d,209.97,Shipped,TRK345678,PA314NP,SUMMER20,2023-05-18 16:45:00
+OR902QR,michael.b@email.com,e4ffde44-5d2a-4c8b-9e1c-3b0a6f9d250e,49.99,Cancelled,,PA902QR,,2023-05-19 10:10:00

@@ -1,0 +1,6 @@
+user_id,name,email,phone,address_street,address_city,address_state,address_zip_code
+a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,John Doe,john.doe@email.com,555-123-4567,123 Main St,New York,NY,10001
+b1ffac1d-8e5d-4a7c-9f2e-6c3d9b0e380b,Jane Smith,jane.smith@email.com,555-987-6543,456 Oak Ave,Los Angeles,CA,90001
+c2ddbc22-7f4c-4e8d-9e3f-5d2a8c1f470c,Robert Johnson,robert.j@email.com,555-456-7890,789 Pine Rd,Chicago,IL,60601
+d3eecd33-6e3b-4d9c-8f2d-4c1b7a0e360d,Emily Davis,emily.d@email.com,555-654-3210,321 Elm Blvd,Houston,TX,77001
+e4ffde44-5d2a-4c8b-9e1c-3b0a6f9d250e,Michael Brown,michael.b@email.com,555-789-0123,654 Maple Dr,Philadelphia,PA,19019

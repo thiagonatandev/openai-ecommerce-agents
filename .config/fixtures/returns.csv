@@ -1,0 +1,3 @@
+return_id,order_number,product_id,return_reason,status,requested_at
+RT159YZ,OR739JK,CD526LM,Defective product,Approved,2023-05-20 13:45:00
+RT357UV,OR314NP,AB739JK,Wrong size,Processing,2023-05-21 10:30:00

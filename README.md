@@ -46,10 +46,10 @@ Export your API key as an environment variable:
 export OPENAI_API_KEY=your-api-key-here
 ```
 
-Or create a `.env` file inside the `python-backend/` directory:
+Or create a `.env` file :
 
 ```
-OPENAI_API_KEY=your-api-key-here
+cp .env.example .env
 ```
 
 ### 3. Install backend dependencies
@@ -68,9 +68,23 @@ cd ../ui
 yarn
 ```
 
-## Usage
+## How to run
 
-### 1. Start the backend
+### Use
+```bash
+chmod +x ./start.sh
+./start.sh
+```
+
+## Run separately
+
+### 1. Start the containers
+
+```bash
+docker compose -d
+```
+
+### 2. Start only the backend
 
 ```bash
 cd python-backend
@@ -78,7 +92,7 @@ source .venv/bin/activate
 python -m uvicorn api:app --reload --port 8000
 ```
 
-### 2. Start the frontend
+### 3. Start only the frontend
 
 In a new terminal:
 

@@ -1,5 +1,6 @@
 from agents import function_tool, RunContextWrapper
 from context.ecommerce_context import ECommerceAgentContext
+from db.postgres.payments_repository import PaymentsRepository
 
 @function_tool(
     name_override="get_payment_status",
@@ -9,9 +10,15 @@ async def get_payment_status(ctx: RunContextWrapper[ECommerceAgentContext], paym
     """
     Returns static payment status info for the given payment_id.
     """
-    ctx.context.payment_id = payment_id
-    return {
-        "status": "Pendente",
-        "method": "PIX",
-        "expires_at": "2025-06-20T23:59:00"
-    }
+    
+    payment = PaymentsRepository.get_payment_by_id(payment_id)
+    if payment:
+        ctx.context.payment_id = payment_id
+        return {
+            "amount": payment["amount"],
+            "method:": payment["method"],
+            "status": payment["status"],
+            "transaction_date": payment["transaction_date"]
+        }
+    else:
+        return None

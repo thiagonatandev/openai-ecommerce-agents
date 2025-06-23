@@ -1,27 +1,17 @@
-from agents import function_tool, RunContextWrapper # type: ignore
-from context.ecommerce_context import ECommerceAgentContext 
+from agents import RunContextWrapper, function_tool
+from db.postgres.orders_repository import OrdersRepository
+from context.ecommerce_context import ECommerceAgentContext
 
 @function_tool(
     name_override="apply_discount_code",
-    description_override="Validates and applies a discount coupon code."
+    description_override="Applies a discount code to the given order if valid"
 )
-
-async def apply_discount_code(ctx: RunContextWrapper[ECommerceAgentContext], code: str) -> dict:
+async def apply_discount_code(ctx: RunContextWrapper[ECommerceAgentContext], order_number: str, discount_code: str) -> bool:
     """
-    Returns static discount code validation and details.
+    Applies the discount code to the order if valid.
+    Returns True if applied successfully, False otherwise.
     """
-    if ctx.context.discount_code == code:
-        return {
-        "valid": False,
-        "discount_value": "",
-        "restrictions": "",
-        "reason": "discount already activated"
-    }
-
-    ctx.context.discount_code = code
-    return {
-        "valid": True,
-        "discount_value": "20%",
-        "restrictions": "válido para compras acima de R$100",
-        "reason": ""
-    }
+    success = OrdersRepository.apply_discount(order_number, discount_code)
+    if success:
+        ctx.context.discount_code = discount_code
+    return success

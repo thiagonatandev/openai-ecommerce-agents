@@ -20,6 +20,14 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  mockoon:
+    image: mockoon/cli:latest
+    command: ["--data", "/data/mockoon-environment.json", "--port", "${MOCKOON_PORT}"]
+    ports:
+      - "${MOCKOON_PORT}:${MOCKOON_PORT}"
+    volumes:
+      - ./mockoon-data:/data
+
 volumes:
   postgres_data:
   redis_data:

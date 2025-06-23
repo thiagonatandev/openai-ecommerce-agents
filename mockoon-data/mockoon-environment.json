@@ -1,0 +1,61 @@
+{
+  "uuid": "",
+  "lastMigration": 29,
+  "name": "Tracking Mock API",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3001,
+  "routes": [
+    {
+      "uuid": "",
+      "documentation": "Get the tracking information",
+      "method": "get",
+      "endpoint": "tracking/:tracking_code",
+      "responses": [
+        {
+          "uuid": "",
+          "body": "{\n      \"tracking_code\": \"{{urlParam 'tracking_code'}}\",\n      \"status\": \"Em Trânsito\",\n      \"carrier\": \"Mock-Logística\",\n      \"history\": [\n        {\n          \"date\": \"2025-07-24T18:00:00Z\",\n          \"location\": \"Centro de Distribuição, Curitiba - PR\",\n          \"description\": \"Objeto em trânsito para a sua cidade\"\n        },\n        {\n          \"date\": \"2025-07-23T10:00:00Z\",\n          \"location\": \"Unidade de Tratamento, São Paulo - SP\",\n          \"description\": \"Objeto postado\"\n        }\n      ],\n      \"estimated_delivery\": \"2025-07-28\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Success",
+          "headers": [{ "key": "", "value": "" }],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "databucketID": "",
+          "bodyType": "INLINE",
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null,
+      "type": "http"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "cors": true,
+  "headers": [{ "key": "Content-Type", "value": "application/json" }],
+  "proxyReqHeaders": [{ "key": "", "value": "" }],
+  "proxyResHeaders": [{ "key": "", "value": "" }],
+  "proxyRemovePrefix": false,
+  "hostname": "",
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "data": [],
+  "folders": [],
+  "rootChildren": [
+    { "type": "route", "uuid": "" }
+  ]
+}

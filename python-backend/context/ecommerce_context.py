@@ -20,5 +20,4 @@ class ECommerceAgentContext(BaseModel):
 
 def create_initial_context() -> ECommerceAgentContext:
     ctx = ECommerceAgentContext()
-    ctx.user_id = str(uuid.uuid4())
     return ctx

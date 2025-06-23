@@ -3,12 +3,12 @@ from typing import Optional, Dict, Any, Union
 import redis
 from db.conversation_store import ConversationStore
 from utils.get_env import load_config
-from context.ecommerce_context import ECommerceAgentContext  # Import your context model
+from context.ecommerce_context import ECommerceAgentContext
 
 config = load_config()
 
 class RedisConversationStore(ConversationStore):
-    def __init__(self, redis_url: str = f'redis://{config["REDIS_HOST"]}:{config["REDIS_PORT"]}', expiration_seconds: int = 3600):
+    def __init__(self, redis_url: str = f'redis://{config["REDIS_HOST"]}:{config["REDIS_PORT"]}', expiration_seconds: int = 86400):
         self.client = redis.Redis.from_url(redis_url)
         self.expiration_seconds = expiration_seconds  
     

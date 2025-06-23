@@ -1,4 +1,18 @@
 discount_code,description,type,value,is_active,expiration_date,min_purchase_value,applicable_category
-DISC10,10% off entire order,Percentage,10.0,TRUE,2023-12-31,100.00,
-SUMMER20,$20 off summer collection,Fixed,20.0,TRUE,2023-08-31,150.00,Fitness
-WELCOME5,$5 off first order,Fixed,5.0,TRUE,2023-12-31,25.00,
+DISC10,10% off entire order,Percentage,10.0,TRUE,2025-12-31,100.00,
+SUMMER20,$20 off summer collection,Fixed,20.0,TRUE,2025-08-31,150.00,Fitness
+GEN10,10% off general order,Percentage,10.0,TRUE,2025-12-31,50.00,
+WELCOME5,$5 off first order,Fixed,5.0,TRUE,2025-12-31,20.00,
+FESTIVE15,15% off festive sale,Percentage,15.0,TRUE,2025-12-31,100.00,
+ELECTRO15,15% off electronics,Percentage,15.0,TRUE,2025-11-30,50.00,Electronics
+GADGET5,$5 off gadgets,Fixed,5.0,TRUE,2025-12-31,30.00,Electronics
+TECH20,20% off tech gear,Percentage,20.0,TRUE,2025-10-31,150.00,Electronics
+FITNESS10,10% off fitness products,Percentage,10.0,TRUE,2025-09-30,40.00,Fitness
+YOGA25,$25 off yoga gear,Fixed,25.0,TRUE,2025-07-31,80.00,Fitness
+RUN15,15% off running shoes,Percentage,15.0,TRUE,2025-08-31,60.00,Fitness
+ACCESS10,$10 off accessories,Fixed,10.0,TRUE,2025-12-31,25.00,Accessories
+BAG20,20% off bags,Percentage,20.0,TRUE,2025-11-30,70.00,Accessories
+WATCH5,$5 off watches,Fixed,5.0,TRUE,2025-12-31,50.00,Accessories
+OLD50,50% off old stock,Percentage,50.0,FALSE,2023-12-31,100.00,
+SUMMER15,$15 off summer collection,Fixed,15.0,FALSE,2024-08-31,80.00,Fitness
+BLACKFRIDAY,Black Friday deal 40%,Percentage,40.0,FALSE,2024-11-29,150.00,
